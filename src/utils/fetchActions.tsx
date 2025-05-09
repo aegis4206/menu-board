@@ -22,7 +22,7 @@ function useFetchActions<T = unknown>(url: string): FetchActionsType<T> {
 
             setTimeout(() => {
                 controller.abort();
-            }, 2000);
+            }, 30000);
             let paramUrl = SpecificUrl ?? "";
             switch (method) {
                 case "GET":

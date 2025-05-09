@@ -17,9 +17,10 @@ export interface AuthUserType {
 }
 
 export const posts = {
-  id: "編號",
+  // id: "編號",
+  sort: "排序",
   title: "標題",
-  content: "內容",
+  // content: "內容",
   type_id: "分類名稱",
   tab_id: "分頁名稱",
   imgurl: "圖片位置",
@@ -28,6 +29,7 @@ export const posts = {
 };
 export interface PostsType {
   id: string;
+  sort: string;
   title: string;
   content: string;
   type_id: string;
@@ -39,6 +41,7 @@ export interface PostsType {
 
 export const types = {
   id: "編號",
+  sort: "排序",
   name: "分類名稱",
   imgurl: "圖片位置",
   created_at: "建立時間",
@@ -46,6 +49,7 @@ export const types = {
 };
 export interface TypesType {
   id: string;
+  sort: string;
   name: string;
   imgurl: string;
   created_at: string;
@@ -54,6 +58,7 @@ export interface TypesType {
 
 export const tabs = {
   id: "編號",
+  sort: "排序",
   name: "分頁名稱",
   type_id: "分類名稱",
   created_at: "建立時間",
@@ -61,6 +66,7 @@ export const tabs = {
 };
 export interface TabsType {
   id: string;
+  sort: string;
   name: string;
   type_id: string;
   created_at: string;

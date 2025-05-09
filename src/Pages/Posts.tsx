@@ -10,12 +10,13 @@ import { useAtom } from 'jotai';
 import { TiUpload } from "react-icons/ti";
 import { GridValueGetter } from '@mui/x-data-grid';
 import { modalMessageAtom } from '../states/modal';
-
+import LexicalTool from '../components/lexicalTool';
 
 const fields: ModalFieldConfig[] = [
     { name: "id", label: "編號", type: "text", disabled: true },
+    { name: "sort", label: "排序", type: "number", validation: ['isEmpty'] },
     { name: "title", label: "標題", type: "text", validation: ["isEmpty"] },
-    { name: "content", label: "內容", type: "text", validation: ["isEmpty"] },
+    { name: "content", label: "內容", type: "custom" },
     { name: "type_id", label: "分類名稱", type: "custom", validation: ["isEmpty"] },
     { name: "tab_id", label: "分頁名稱", type: "custom", validation: ["isEmpty"] },
     { name: "imgurl", label: "圖片", type: "custom", },
@@ -24,6 +25,7 @@ const fields: ModalFieldConfig[] = [
 ];
 const initData: PostsType = {
     id: "",
+    sort: "",
     title: "",
     content: "",
     type_id: "",
@@ -214,7 +216,18 @@ const Posts = () => {
                     </MenuItem>}
                 </TextField>
             </Grid2>,
+        content: (field: ModalFieldConfig) =>
+            <Grid2 size={{ xs: 12, md: 12 }} key={field.name}>
+                <LexicalTool value={formData.content} onChange={(newValue) => {
+                    // console.log(newValue)
+                    setFormData(pre => ({
+                        ...pre,
+                        content: newValue
+                    }))
+                }} />
+            </Grid2>
     }
+
 
     const handleSelectChange = async (name: string, value: string) => {
         const tempFormData = { [name as keyof PostsType]: value }
@@ -277,6 +290,7 @@ const Posts = () => {
         setModalFields(newFields);
 
     }
+
 
 
     return (

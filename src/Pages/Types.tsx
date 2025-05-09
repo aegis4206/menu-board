@@ -12,6 +12,7 @@ import { modalMessageAtom } from '../states/modal';
 
 const fields: ModalFieldConfig[] = [
     { name: "id", label: "編號", type: "text", disabled: true },
+    { name: "sort", label: "排序", type: "number", validation: ['isEmpty'] },
     { name: "name", label: "分類名稱", type: "text", validation: ["isEmpty"] },
     { name: "imgurl", label: "圖片", type: "custom", },
     // { name: "created_at", label: "建立時間", type: "text", disabled: true },
@@ -19,6 +20,7 @@ const fields: ModalFieldConfig[] = [
 ];
 const initData: TypesType = {
     id: "",
+    sort: "",
     name: "",
     imgurl: "",
     created_at: "",

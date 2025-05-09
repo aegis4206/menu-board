@@ -140,17 +140,15 @@ function DataTablePage<T extends TableRow>({
         return [
             ...defaultActions,
             ...Object.keys(dataType).map<GridColDef>((key) => {
-                let width = String(dataType[key]).length * 25;
+                let width = String(dataType[key]).length * 60;
                 switch (key) {
                     case "imgurl":
-                        width = 250;
+                        width = 300;
                         break;
                     case "content":
                         width = 150;
                         break;
-                    case "title":
-                        width = 100;
-                        break;
+                   
                 }
                 const baseCol: GridColDef = {
                     field: key,

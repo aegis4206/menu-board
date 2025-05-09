@@ -11,6 +11,7 @@ import { useAtom } from 'jotai';
 
 const fields: ModalFieldConfig[] = [
     { name: "id", label: "編號", type: "text", disabled: true },
+    { name: "sort", label: "排序", type: "number", validation: ['isEmpty'] },
     { name: "name", label: "分頁名稱", type: "text", validation: ["isEmpty"] },
     { name: "type_id", label: "分類名稱", type: "select", validation: ["isEmpty"] },
     { name: "imgurl", label: "圖片", type: "custom", },
@@ -19,6 +20,7 @@ const fields: ModalFieldConfig[] = [
 ];
 const initData: TabsType = {
     id: "",
+    sort: "",
     name: "",
     type_id: "",
     created_at: "",
