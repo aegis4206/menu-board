@@ -2,34 +2,37 @@ import { LexicalComposer } from '@lexical/react/LexicalComposer';
 import { ContentEditable } from '@lexical/react/LexicalContentEditable';
 import { RichTextPlugin } from '@lexical/react/LexicalRichTextPlugin';
 import { OnChangePlugin } from '@lexical/react/LexicalOnChangePlugin';
-import { $createParagraphNode, $getRoot, EditorState } from 'lexical';
-import { useEffect, useMemo, useRef } from 'react';
+import { EditorState, LexicalEditor } from 'lexical';
+import { RefObject, useEffect, useMemo, useRef } from 'react';
 import LexicalToolPlugin from './lexicalToolPlugin';
 import useDebounce from '../utils/debounce';
 import { HistoryPlugin } from '@lexical/react/LexicalHistoryPlugin';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
-import { Box, Paper, Typography } from '@mui/material';
+import { Box, Paper } from '@mui/material';
 
 interface ControlledEditorProps {
     value: string;
     onChange?: (value: string) => void;
     placeholder?: React.ReactNode;
     readOnly?: boolean;
+    ref?: RefObject<LexicalEditor | null>;
 }
 
-function EditorContent({ value, readOnly }: { value: string, readOnly: boolean }) {
+function EditorContent({ value, readOnly, ref }: { value: string, readOnly: boolean, ref?: RefObject<LexicalEditor | null> }) {
     const [editor] = useLexicalComposerContext();
     const hasInitialized = useRef(false);
 
     useEffect(() => {
         if (!hasInitialized.current) {
             editor.update(() => {
-                const root = $getRoot();
+                // 暫時註解
+                // const root = $getRoot();
                 // 確保至少有一個空段落節點
-                if (root.isEmpty()) {
-                    const paragraph = $createParagraphNode();
-                    root.append(paragraph);
-                }
+                // if (root.isEmpty()) {
+                //     const paragraph = $createParagraphNode();
+                //     root.append(paragraph);
+                // }
+
                 // 處理初始值
                 if (value) {
                     try {
@@ -43,6 +46,9 @@ function EditorContent({ value, readOnly }: { value: string, readOnly: boolean }
             });
             hasInitialized.current = true;
         }
+    }, [editor]);
+
+    useEffect(() => {
         if (readOnly && value) {
             try {
                 const parsed = JSON.parse(value);
@@ -54,10 +60,16 @@ function EditorContent({ value, readOnly }: { value: string, readOnly: boolean }
         }
     }, [editor, value]);
 
+    useEffect(() => {
+        if (ref) {
+            ref.current = editor;
+        }
+    }, [ref]);
+
     return null;
 }
 
-export default function LexicalTool({ value, onChange, readOnly = false }: ControlledEditorProps) {
+export default function LexicalTool({ value, onChange, readOnly = false, ref }: ControlledEditorProps) {
     const initialConfig = useMemo(() => ({
         namespace: 'ControlledEditor',
         onError(error: Error) {
@@ -75,6 +87,8 @@ export default function LexicalTool({ value, onChange, readOnly = false }: Contr
         readOnly,
     }), [readOnly]);
 
+
+
     const handleEditorStateChange = (editorState: EditorState) => {
         const jsonString = JSON.stringify(editorState.toJSON());
         onChange?.(jsonString);
@@ -90,7 +104,7 @@ export default function LexicalTool({ value, onChange, readOnly = false }: Contr
                         <LexicalToolPlugin />
                     </Box>
                 )}
-                <EditorContent value={value} readOnly={readOnly} />
+                <EditorContent ref={ref} value={value} readOnly={readOnly} />
 
                 <Box
                     sx={{
@@ -134,15 +148,15 @@ export default function LexicalTool({ value, onChange, readOnly = false }: Contr
                             lineHeight: '1.5',
                             cursor: 'text',
                         }} autoFocus className="editor-input" />}
-                        placeholder={
-                            <Typography
-                                component="span"
-                                variant="body1"
-                                sx={{ color: 'text.secondary', opacity: 0.6, m: 0, position: 'absolute', top: 8 }}
-                            >
-                                請輸入內容...
-                            </Typography>
-                        }
+                        // placeholder={
+                        //     <Typography
+                        //         component="span"
+                        //         variant="body1"
+                        //         sx={{ color: 'text.secondary', opacity: 0.6, m: 0, position: 'absolute', top: 8 }}
+                        //     >
+                        //         請輸入內容...
+                        //     </Typography>
+                        // }
                         ErrorBoundary={({ children }) => <div className="error">{children}</div>}
                     />
                 </Box>

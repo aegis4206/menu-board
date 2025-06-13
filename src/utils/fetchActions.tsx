@@ -69,11 +69,11 @@ function useFetchActions<T = unknown>(url: string): FetchActionsType<T> {
                 }
 
                 // 排除object的情況 將object轉為array
-                if (!Array.isArray(data.data)) {
-                    const tempData = [];
-                    tempData.push(data.data as T);
-                    return { ...data, data: tempData };
-                };
+                // if (!Array.isArray(data.data)) {
+                //     const tempData = [];
+                //     tempData.push(data.data as T);
+                //     return { ...data, data: tempData };
+                // };
 
                 if (method !== "GET") {
                     setSnackBar({ open: true, message: '操作成功', severity: 'success' });

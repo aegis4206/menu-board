@@ -1,8 +1,8 @@
 import { Box, Tab, Tabs } from '@mui/material';
-import { Swiper, SwiperSlide } from 'swiper/react';
+import { Swiper, SwiperSlide, SwiperRef } from 'swiper/react';
 import { EffectCoverflow, Pagination, FreeMode } from 'swiper/modules';
 import { usePosts, useTabs } from '../utils/fetchUrls';
-import { Fragment, useEffect, useState } from 'react';
+import { Fragment, useEffect, useRef, useState } from 'react';
 import { PostsType, TabsType } from '../types/board';
 import { useParams } from 'react-router-dom';
 import PhotoSwipe from 'photoswipe';
@@ -22,45 +22,49 @@ const Board = () => {
     const [tabs, setTabs] = useState<TabsType[]>([]);
     const postsApi = usePosts();
     const tabsApi = useTabs();
-    const [tab, setTab] = useState(0);
+    const [tab, setTab] = useState<string | undefined>(undefined);
     const [clickTimeout, setClickTimeout] = useState<number | null>(null);
     const { type_id } = useParams();
     const [swiperActiveIndex, setSwiperActiveIndex] = useState(0);
+    const swiperRef = useRef<SwiperRef | null>(null);
 
 
     useEffect(() => {
-        getPosts(type_id);
-        getTabsList(type_id);
+        getData(type_id);
     }, [type_id]);
 
     useEffect(() => {
-        handleFilterTabPosts(tab, posts);
-    }, [posts, tabs]);
+        handleFilterTabPosts(tab ?? "0", posts);
+    }, [tab]);
 
-    const onTabChange = (_: React.SyntheticEvent, newValue: number) => {
+    const onTabChange = (_: React.SyntheticEvent, newValue: string) => {
         setTab(newValue);
-        handleFilterTabPosts(newValue);
+        // handleFilterTabPosts(newValue);
     };
 
-    const handleFilterTabPosts = (tabNumber: number, data: PostsType[] = posts) => {
+    const handleFilterTabPosts = (tabNumber: string, data: PostsType[] = posts) => {
         if (posts.length === 0 || tabs.length === 0) return;
-        const filteredPosts = data.filter((post) => post.tab_id === tabs[tabNumber].id);
+        const filteredPosts = data.filter((post) => post.tab_id === tabNumber);
         setTabPosts(filteredPosts);
-    };
-
-    const getPosts = async (typeId?: string) => {
-        const res = typeId ? await postsApi.get({ type_id: typeId }) : await postsApi.get();
-        if (res.success) {
-            setPosts(res.data as PostsType[]);
+        if (swiperRef.current) {
+            swiperRef.current.swiper.slideTo(0);
         }
     };
 
-    const getTabsList = async (typeId?: string) => {
-        const res = typeId ? await tabsApi.get({ type_id: typeId }) : await tabsApi.get();
-        if (res.success) {
-            setTabs(res.data as TabsType[]);
+    const getData = async (typeId?: string) => {
+        const PostRes = typeId ? await postsApi.get({ type_id: typeId }) : await postsApi.get();
+        if (PostRes.success) {
+            setPosts(PostRes.data as PostsType[]);
+
+            const TypeRes = typeId ? await tabsApi.get({ type_id: typeId }) : await tabsApi.get();
+            if (TypeRes.success) {
+                setTabs(TypeRes.data as TabsType[]);
+                setTab((TypeRes.data as TabsType[])[0]?.id);
+            }
         }
     };
+
+
 
     const onSwiperSlideDoubleClick = (post: PostsType) => {
         if (clickTimeout) {
@@ -69,11 +73,11 @@ const Board = () => {
 
             // 開啟 PhotoSwipe
             const img = new Image();
-            img.src = post.imgurl;
+            img.src = `${import.meta.env.VITE_API_URL}${post.imgurl}`;
             const lightbox = new PhotoSwipe({
                 dataSource: [
                     {
-                        src: post.imgurl,
+                        src: `${import.meta.env.VITE_API_URL}${post.imgurl}`,
                         width: img.naturalWidth,
                         height: img.naturalHeight,
 
@@ -104,21 +108,22 @@ const Board = () => {
 
     return (
         <Box sx={{ width: '100%', height: '100%', display: 'flex' }}>
-            <Box hidden={tabs.length === 0} sx={{ borderRight: 1, borderColor: 'divider' }}>
+            <Box hidden={tabs.length === 0} sx={{ borderRight: 1, borderColor: 'divider', width: '100px' }}>
                 <Tabs
                     orientation="vertical"
                     variant="scrollable"
-                    value={tab}
+                    value={tab ?? false}
                     onChange={onTabChange}
                     sx={{ borderColor: 'divider', zIndex: 999999999 }}
                 >
                     {tabs.map((tab) => (
-                        <Tab key={tab.id} label={tab.name} id={tab.id} />
+                        <Tab key={tab.id} label={tab.name.toString()} value={tab.id} wrapped sx={{ paddingLeft: 0, paddingTop: 0, paddingBottom: 0 }} />
                     ))}
                 </Tabs>
             </Box>
             <Box sx={{ overflowY: 'auto' }}>
                 <Swiper
+                    ref={swiperRef}
                     initialSlide={1}
                     slidesPerView={1}
                     spaceBetween={30}
@@ -141,14 +146,14 @@ const Board = () => {
                         slideShadows: true,
                     }}
                     modules={[FreeMode, Pagination, EffectCoverflow]}
-                    style={{ height: '100%', width: '100%' }}
+                    style={{ height: 'auto', width: '100%' }}
                     onSlideChange={(swiper) => setSwiperActiveIndex(swiper.activeIndex)}
                 >
                     {tabPosts.map((post, index) => (
                         <Fragment key={index}>
                             <SwiperSlide key={index} onClick={() => onSwiperSlideDoubleClick(post)}>
                                 <img
-                                    src={post.imgurl}
+                                    src={`${import.meta.env.VITE_API_URL}${post.imgurl}`}
                                     alt={`Slide ${index + 1}`}
                                     style={{
                                         width: '100%',

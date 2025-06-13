@@ -142,7 +142,7 @@ const Types = () => {
                     )}
                     {!imageUrl && formData.imgurl && (
                         <img
-                            src={formData.imgurl}
+                            src={`${import.meta.env.VITE_API_URL}${formData.imgurl}`}
                             alt="Uploaded"
                             style={{ width: '100%', maxHeight: "100%", objectFit: 'contain' }}
                         />

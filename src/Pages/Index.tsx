@@ -36,7 +36,7 @@ const Index = () => {
                         <Link to={`/type/${type.id}`} key={type.id} style={{ textDecoration: 'none', color: 'inherit' }}>
                             <ImageListItem>
                                 <img
-                                    src={type.imgurl}
+                                    src={`${import.meta.env.VITE_API_URL}${type.imgurl}`}
                                     alt={type.name}
                                     loading="lazy"
                                     style={{ width: '100%', height: 'auto', objectFit: 'contain', }}

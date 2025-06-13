@@ -9,7 +9,7 @@ import {
     LexicalNode,
 } from 'lexical';
 import useDebounce from '../utils/debounce';
-import { Button, FormControl, Input, InputLabel, Select, SelectChangeEvent, Stack } from '@mui/material';
+import { FormControl, Input, InputLabel, Select, SelectChangeEvent, Stack } from '@mui/material';
 import { useState } from 'react';
 import { FaBold, FaItalic, FaStrikethrough, FaUnderline } from 'react-icons/fa';
 
@@ -112,21 +112,11 @@ export default function LexicalToolPlugin() {
     };
 
     return (
-        <Stack direction="row" spacing={1} p={2} mb={2} sx={{ backgroundColor: '#f5f5f5', borderRadius: 1 }}>
-            <Button size='small' variant="text" onClick={() => editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'bold')}>
-                <FaBold />
-            </Button>
-            <Button size='small' variant="text" onClick={() => editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'italic')}>
-                <FaItalic />
-            </Button>
-            <Button size='small' variant="text" onClick={() => editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'strikethrough')}>
-                <FaStrikethrough />
-            </Button>
-            <Button size='small' variant="text" onClick={() => editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'underline')}>
-                <FaUnderline />
-            </Button>
-
-
+        <Stack direction="row" spacing={3} p={2} mb={2} sx={{ backgroundColor: '#f5f5f5', borderRadius: 1, display: 'flex', alignItems: 'center', flexWrap: "wrap" }}>
+            <FaBold onClick={() => editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'bold')} />
+            <FaItalic onClick={() => editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'italic')} />
+            <FaStrikethrough onClick={() => editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'strikethrough')} />
+            <FaUnderline onClick={() => editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'underline')} />
             <Input
                 type="color"
                 value={color}

@@ -11,6 +11,7 @@ import { TiUpload } from "react-icons/ti";
 import { GridValueGetter } from '@mui/x-data-grid';
 import { modalMessageAtom } from '../states/modal';
 import LexicalTool from '../components/lexicalTool';
+import { $getRoot, LexicalEditor } from 'lexical';
 
 const fields: ModalFieldConfig[] = [
     { name: "id", label: "編號", type: "text", disabled: true },
@@ -49,7 +50,7 @@ const Posts = () => {
     const tabsApi = useTabs();
     const [tabsList, setTabsList] = useState<TabsType[]>([]);
     const [, setModalMessage] = useAtom(modalMessageAtom)
-
+    const editor = useRef<LexicalEditor>(null);
 
     const customRenderers = {
         type_id: (value: GridValueGetter) => {
@@ -81,7 +82,6 @@ const Posts = () => {
     };
 
     const onEdit = (row: PostsType) => {
-        console.log(row);
         setImageUrl(null);
         setModalMode("edit");
         setFormData(row);
@@ -111,6 +111,28 @@ const Posts = () => {
             }
             body.append(key, formData[key as keyof PostsType])
         });
+
+        // 判斷lexical content是否為空
+        if (editor && formData.content) {
+            try {
+                const parsedJson = JSON.parse(formData.content);
+                const restoredEditorState = editor.current?.parseEditorState(parsedJson);
+                if (restoredEditorState) {
+                    restoredEditorState.read(() => {
+                        const textContent = $getRoot().getTextContent().trim();
+                        const isEmpty = textContent === '';
+                        if (isEmpty) {
+                            body.delete('content');
+                            body.append('content', "");
+                        }
+                    });
+                }
+            } catch (error) {
+                console.error('Error parsing JSON:', error);
+            }
+        }
+
+
 
         const api = {
             add: () => postsApi.post(body),
@@ -165,7 +187,7 @@ const Posts = () => {
                     )}
                     {!imageUrl && formData.imgurl && (
                         <img
-                            src={formData.imgurl}
+                            src={`${import.meta.env.VITE_API_URL}${formData.imgurl}`}
                             alt="Uploaded"
                             style={{ width: '100%', maxHeight: "100%", objectFit: 'contain' }}
                         />
@@ -218,7 +240,7 @@ const Posts = () => {
             </Grid2>,
         content: (field: ModalFieldConfig) =>
             <Grid2 size={{ xs: 12, md: 12 }} key={field.name}>
-                <LexicalTool value={formData.content} onChange={(newValue) => {
+                <LexicalTool ref={editor} value={formData.content} onChange={(newValue) => {
                     // console.log(newValue)
                     setFormData(pre => ({
                         ...pre,

@@ -1,13 +1,13 @@
 import { atom } from "jotai";
 import { MenuItem } from "../types/menu";
-import { FaUserCircle } from 'react-icons/fa';
+// import { FaUserCircle } from 'react-icons/fa';
 import { MdOutlineManageAccounts } from 'react-icons/md';
 import { IoHomeOutline } from "react-icons/io5";
 import { VscTypeHierarchySub, VscGroupByRefType } from "react-icons/vsc";
 import { AiFillPicture } from "react-icons/ai";
 
 
-import Auth_user from "../Pages/Auth_user";
+// import Auth_user from "../Pages/Auth_user";
 import Index from "../Pages/Index";
 import Posts from "../Pages/Posts";
 import Types from "../Pages/Types";
@@ -35,12 +35,6 @@ export const sideBarMenuData = atom<MenuItem[]>([
         icon: <MdOutlineManageAccounts />,
         children: [
             {
-                name: "圖片管理",
-                path: "management/posts",
-                icon: <AiFillPicture />,
-                pageNode: <Posts />,
-            },
-            {
                 name: "分類管理",
                 path: "management/types",
                 icon: <VscTypeHierarchySub />,
@@ -53,12 +47,18 @@ export const sideBarMenuData = atom<MenuItem[]>([
                 pageNode: <Tabs />,
             },
             {
-                name: "用戶管理",
-                path: "management/users",
-                icon: <FaUserCircle />,
-                pageNode: <Auth_user />,
+                name: "圖片管理",
+                path: "management/posts",
+                icon: <AiFillPicture />,
+                pageNode: <Posts />,
             },
+            // {
+            //     name: "用戶管理",
+            //     path: "management/users",
+            //     icon: <FaUserCircle />,
+            //     pageNode: <Auth_user />,
+            // },
         ],
     },
-  
+
 ]);

@@ -23,3 +23,6 @@ dist-ssr
 *.sln
 *.sw?
 
+# 排除env
+*.env
+
