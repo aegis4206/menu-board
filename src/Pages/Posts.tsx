@@ -111,7 +111,6 @@ const Posts = () => {
             }
             body.append(key, formData[key as keyof PostsType])
         });
-
         // 判斷lexical content是否為空
         if (editor && formData.content) {
             try {
@@ -131,7 +130,10 @@ const Posts = () => {
                 console.error('Error parsing JSON:', error);
             }
         }
-
+        if (body.get('content') === "null") {
+            body.delete('content');
+            body.append('content', "");
+        }
 
 
         const api = {
